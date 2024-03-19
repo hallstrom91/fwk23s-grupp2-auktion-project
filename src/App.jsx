@@ -2,10 +2,16 @@ import { useState } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
+import Switch from "./Switch";
+
 function App() {
   return (
     <>
-      <h1>Hello</h1>
+      <Navigation />
+      <Switch />
+      <Footer />
     </>
   );
 }

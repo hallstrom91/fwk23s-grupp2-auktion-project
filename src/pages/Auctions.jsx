@@ -9,7 +9,7 @@ export default function Home() {
       <Container className="p-4">
         <Col>
           <Row className="text-center">
-            <h1>Home</h1>
+            <h1>Auktioner</h1>
           </Row>
         </Col>
       </Container>
