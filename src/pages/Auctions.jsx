@@ -1,51 +1,53 @@
 import React, { useState, useEffect } from "react";
-import Container from "react-bootstrap/Container";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
+import { Container, Col, Row, Form, Button } from "react-bootstrap";
+import DeleteAuctionBtn from "../components/DeleteAuctionBtn";
 
-export default function Home() {
-  // getter & setter for auction-objects
-  const [auctions, setAuctions] = useState([]);
+// import functions from AuctionAPI
+import { useAuctionApi } from "../AuctionApi";
 
-  // getter & setter for auction-objects connected bids
-  const [auctionBids, setAuctionBids] = useState([]);
+export default function Auctions() {
+  // import functions from AuctionApi.jsx to use here
+  const { auctions, fetchAuctions, createAuction } = useAuctionApi();
 
-  // Fetch Call to get all auctions, mounts at render
+  // collect auction-objects and connected bids to display at mount
   useEffect(() => {
-    const fetchAuctions = async () => {
-      try {
-        const response = await fetch(
-          "https://auctioneer.azurewebsites.net/auction/z2a"
-        );
-        const data = await response.json();
-        console.log(data);
-        setAuctions(data);
-      } catch (error) {
-        console.error("Failed to fetch auctions", error);
-      }
-    };
     fetchAuctions();
   }, []);
 
-  // Fetch call to get bids connected to a specific auction object
-  useEffect(() => {
-    const fetchAuctionBids = async () => {
-      try {
-        const response = await fetch(
-          "https://auctioneer.azurewebsites.net/bid/}"
-        );
-        const data = await response.json();
-        console.log(data);
-        setAuctionBids((prevBids) => ({ ...prevBids, [auctionID]: data }));
-      } catch (error) {
-        console.error("Failed to fetch bid to auction object", error);
-      }
-    };
+  // collect and send userData to create new auction item.
+  const [newAuction, setNewAuction] = useState({
+    Title: "",
+    Description: "",
+    EndDate: "",
+    StartingPrice: "",
+    CreatedBy: "",
+  });
 
-    auctions.forEach((auction) => {
-      fetchAuctionBids(auction.AuctionID);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewAuction((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    createAuction(newAuction);
+    // reset input-values after submit
+    setNewAuction({
+      Title: "",
+      Description: "",
+      EndDate: "",
+      StartingPrice: "",
+      CreatedBy: "",
     });
-  }, [auctions]);
+  };
+
+  // handle delete of object
+  const handleDelete = () => {
+    fetchAuctions();
+  };
 
   return (
     <>
@@ -57,26 +59,116 @@ export default function Home() {
           </Row>
         </Col>
         <Row>
-          <Col>
-            {/* Display Auction Object  */}
+          {/* TEST TO MAP ALL AUCTIONS  */}
+          <div className="flex">
             {auctions.map((auction) => (
-              <div key={auction.AuctionID} className="pb-5">
-                <p>Title: {auction.Title}</p>
+              <div key={auction.AuctionID} className="m-2 border border-dark">
+                <h5 className="text-center">Title: {auction.Title}</h5>
                 <p>Beskrivning: {auction.Description}</p>
                 <p>Startdatum: {auction.StartDate}</p>
                 <p>Slutdatum: {auction.EndDate}</p>
                 <p>Startbud: {auction.StartingPrice}</p>
                 <p>Säljare: {auction.CreatedBy}</p>
-                {/* Display Bids connected to a specific Auction Object  */}
-                {auctionBids[auction.AuctionID] &&
-                  auctionBids[auction.AuctionID].map((bid) => (
-                    <div key={bid.BidID}>
-                      <p>Högsta bud: {bid.Amount}</p>
-                      <p>Budgivare: {bid.Bidder}</p>
-                    </div>
+                <div className="m-2 border border-black ">
+                  {auction.bids.map((bid) => (
+                    <ul key={bid.AuctionID}>
+                      <li>
+                        <p>Budgivare: {bid.Bidder} </p>
+                        <p>Högsta Bud: {bid.Amount}</p>
+                      </li>
+                    </ul>
                   ))}
+                </div>
+                <div className="">
+                  <DeleteAuctionBtn auction={auction} onDelete={handleDelete} />
+                </div>
               </div>
             ))}
+          </div>
+        </Row>
+
+        {/* TEST FUNCTION TO ADD OBJECT TO API DB */}
+        <Row>
+          <Col className="mt-4 d-flex flex-column">
+            <Form
+              onSubmit={handleSubmit}
+              className="align-self-center justify-content-center w-50 border border-black p-4"
+            >
+              <Form.Group controlId="formTitle">
+                <Form.Label>Titel:</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ange en titel"
+                  name="Title"
+                  value={newAuction.Title}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              {/* Wrong format in datetime-local */}
+              <Form.Group>
+                <Form.Label>Start Datum:</Form.Label>
+                <Form.Control
+                  type="datetime-local"
+                  name="StartDate"
+                  value={new Date()
+                    .toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" })
+                    .slice(0, 16)}
+                  disabled
+                  readOnly
+                />
+              </Form.Group>
+              <Form.Group controlId="formDescription">
+                <Form.Label>Beskrivning:</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Beskriv varan"
+                  name="Description"
+                  value={newAuction.Description}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="formEndDate">
+                <Form.Label>Slut datum:</Form.Label>
+                <Form.Control
+                  type="datetime-local"
+                  name="EndDate"
+                  value={new Date(newAuction.EndDate)
+                    .toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" })
+                    .slice(0, 16)}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="formStartingPrice">
+                <Form.Label>Utropspris:</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Ange utropspris"
+                  name="StartingPrice"
+                  value={newAuction.StartingPrice}
+                  onChange={handleChange}
+                  required
+                  inputMode="numeric"
+                />
+              </Form.Group>
+              <Form.Group controlId="formCreatedBy">
+                <Form.Label>Säljare:</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter your name"
+                  name="CreatedBy"
+                  value={newAuction.CreatedBy}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit" className="mt-3">
+                Skapa Annons
+              </Button>
+            </Form>
           </Col>
         </Row>
       </Container>
