@@ -6,13 +6,18 @@ import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 import Switch from "./Switch";
 
+// import AuctionProvider from AuctionApi.jsx
+import { AuctionProvider } from "./AuctionApi";
+
 function App() {
   return (
-    <>
-      <Navigation />
-      <Switch />
-      <Footer />
-    </>
+    <AuctionProvider>
+      <>
+        <Navigation />
+        <Switch />
+        <Footer />
+      </>
+    </AuctionProvider>
   );
 }
 
