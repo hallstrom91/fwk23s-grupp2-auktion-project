@@ -1,0 +1,31 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+.auction-card {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+  
+.custom-card {
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+transition: 0.3s;
+}
+
+.custom-card:hover {
+box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.time-left {
+color: #ff4500; 
+}
+.custom-btn-group .btn:not(:last-child) {
+margin-right: 8px; 
+}
+.button{
+border-radius: 100px;
+}

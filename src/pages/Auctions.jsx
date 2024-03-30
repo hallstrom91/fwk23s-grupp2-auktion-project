@@ -2,23 +2,17 @@ import React, { useState, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import AuctionContainer from "../components/AuctionContainer";
 
 export default function Home() {
-  // getter & setter for auction-objects
   const [auctions, setAuctions] = useState([]);
+  const [auctionBids, setAuctionBids] = useState({});
 
-  // getter & setter for auction-objects connected bids
-  const [auctionBids, setAuctionBids] = useState([]);
-
-  // Fetch Call to get all auctions, mounts at render
   useEffect(() => {
     const fetchAuctions = async () => {
       try {
-        const response = await fetch(
-          "https://auctioneer.azurewebsites.net/auction/z2a"
-        );
+        const response = await fetch("https://auctioneer.azurewebsites.net/auction/z2a");
         const data = await response.json();
-        console.log(data);
         setAuctions(data);
       } catch (error) {
         console.error("Failed to fetch auctions", error);
@@ -27,15 +21,11 @@ export default function Home() {
     fetchAuctions();
   }, []);
 
-  // Fetch call to get bids connected to a specific auction object
   useEffect(() => {
-    const fetchAuctionBids = async () => {
+    const fetchAuctionBids = async (auctionID) => {
       try {
-        const response = await fetch(
-          "https://auctioneer.azurewebsites.net/bid/}"
-        );
+        const response = await fetch(`https://auctioneer.azurewebsites.net/bid/${auctionID}`);
         const data = await response.json();
-        console.log(data);
         setAuctionBids((prevBids) => ({ ...prevBids, [auctionID]: data }));
       } catch (error) {
         console.error("Failed to fetch bid to auction object", error);
@@ -50,34 +40,21 @@ export default function Home() {
   return (
     <>
       <Container className="p-4">
-        <Col>
-          <Row className="text-center">
-            {/* Import of auction objects */}
-            <h1>Auktioner</h1>
-          </Row>
-        </Col>
-        <Row>
-          <Col>
-            {/* Display Auction Object  */}
-            {auctions.map((auction) => (
-              <div key={auction.AuctionID} className="pb-5">
-                <p>Title: {auction.Title}</p>
-                <p>Beskrivning: {auction.Description}</p>
-                <p>Startdatum: {auction.StartDate}</p>
-                <p>Slutdatum: {auction.EndDate}</p>
-                <p>Startbud: {auction.StartingPrice}</p>
-                <p>Säljare: {auction.CreatedBy}</p>
-                {/* Display Bids connected to a specific Auction Object  */}
-                {auctionBids[auction.AuctionID] &&
-                  auctionBids[auction.AuctionID].map((bid) => (
-                    <div key={bid.BidID}>
-                      <p>Högsta bud: {bid.Amount}</p>
-                      <p>Budgivare: {bid.Bidder}</p>
-                    </div>
-                  ))}
-              </div>
-            ))}
-          </Col>
+        <Row className="text-center mb-4">
+          <h1>Auktioner</h1>
+        </Row>
+        <Row className="d-flex flex-wrap">
+          {auctions.map((auction) => (
+            <Col key={auction.AuctionID} lg={4} md={6} sm={12}>
+              <AuctionContainer auction={auction} />
+              {auctionBids[auction.AuctionID]?.map((bid) => (
+                <div key={bid.BidID}>
+                  <p>Högsta bud: {bid.Amount}</p>
+                  <p>Budgivare: {bid.Bidder}</p>
+                </div>
+              ))}
+            </Col>
+          ))}
         </Row>
       </Container>
     </>
