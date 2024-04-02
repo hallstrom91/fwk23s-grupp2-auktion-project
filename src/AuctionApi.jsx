@@ -107,6 +107,32 @@ POST Data to API DB
 
   /*
 =========================================
+PUT Data to API DB
+=========================================
+*/
+
+  const updateAuction = async (update) => {
+    const { AuctionID, ...updateData } = update;
+    updateData.StartDate = new Date().toISOString().slice(0, 16);
+    const updateURL = `https://auctioneer.azurewebsites.net/auction/z2a/${AuctionID}`;
+    try {
+      const response = await fetch(updateURL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+      if (response.ok) {
+        console.log("Auktionen har uppdaterats.");
+      }
+    } catch (error) {
+      console.error("Misslyckad uppdatering av auktionen.");
+    }
+  };
+
+  /*
+=========================================
   DELETE Data from API DB
 =========================================
 */
@@ -172,6 +198,7 @@ Time Calc & Converter
         fetchAuctionBids,
         deleteAuction,
         createBid,
+        updateAuction,
         calculateTimeLeft,
         formatStaticDate,
       }}

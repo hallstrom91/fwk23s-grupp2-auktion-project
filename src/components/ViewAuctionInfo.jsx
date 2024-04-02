@@ -96,11 +96,11 @@ export default function ViewAuctionInfo({ auction, leadingBid }) {
               {leadingBid ? (
                 <Card.Text className="text-end">
                   <strong>Högsta Bud: </strong>
-                  {leadingBid.Amount} kr av {leadingBid.Bidder}
+                  {leadingBid.Amount} kr
                 </Card.Text>
               ) : (
                 <Card.Text className="text-end">
-                  <strong>Avslutad utan bud...</strong>
+                  <strong>Inte ett enda bud.</strong>
                 </Card.Text>
               )}
             </Col>

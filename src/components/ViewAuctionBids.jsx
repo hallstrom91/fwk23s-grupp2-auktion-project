@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, ButtonGroup, ListGroup } from "react-bootstrap";
-
+import "../App.css";
 export default function ViewAuctionBids({ auction, leadingBids }) {
   return (
     <>
@@ -22,7 +22,7 @@ export default function ViewAuctionBids({ auction, leadingBids }) {
           /* if bids exists, show all. */
           <ListGroup variant="ol" numbered>
             {auction.bids.map((bid) => (
-              <ListGroup.Item as="li" key={bid.BidID}>
+              <ListGroup.Item variant="li" key={bid.BidID}>
                 {bid.Amount} kr av {bid.Bidder}
               </ListGroup.Item>
             ))}

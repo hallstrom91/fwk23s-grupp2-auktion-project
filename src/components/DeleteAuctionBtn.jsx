@@ -31,11 +31,25 @@ export default function DeleteAuctionBtn({ auction, onDelete, leadingBids }) {
       return;
     }
 
+    // if all is correct, delete auction or give error
     if (deleteKey === auction.CreatedBy) {
-      deleteAuction(auction.AuctionID);
-      setDisplayModal(false);
-      onDelete();
+      deleteAuction(auction.AuctionID)
+        .then(() => {
+          setDisplayModal(false);
+          onDelete();
+        })
+        .catch((error) => {
+          console.error("Kunde inte ta bort auktionen.", error);
+          setError("Kunde inte ta bort auktionen, försök igen.");
+          setTimeout(() => {
+            setError("");
+          }, 3000);
+        });
     }
+  };
+  const clearFields = () => {
+    setDeleteKey("");
+    setDisplayModal(false);
   };
 
   return (
@@ -66,6 +80,7 @@ export default function DeleteAuctionBtn({ auction, onDelete, leadingBids }) {
           <p>
             Ange din <strong>privata</strong> nyckel för att radera annonsen.
           </p>
+          {/* Input for "secret" key to delete auction */}
           <Form.Control
             type="text"
             size="sm"
@@ -76,11 +91,8 @@ export default function DeleteAuctionBtn({ auction, onDelete, leadingBids }) {
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            size="sm"
-            variant="outline-dark"
-            onClick={() => setDisplayModal(false)}
-          >
+          {/* Display Buttons Delete & Close */}
+          <Button size="sm" variant="outline-dark" onClick={clearFields}>
             Avbryt
           </Button>
           <Button

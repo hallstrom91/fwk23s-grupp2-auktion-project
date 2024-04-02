@@ -43,13 +43,14 @@ export default function AuctionContainer({
           <Card.Text>
             <strong>Tid Kvar:</strong>{" "}
             {Object.keys(auctionTimeLeft).length
-              ? `${auctionTimeLeft.days}d ${auctionTimeLeft.hours}h ${auctionTimeLeft.minutes}m ${auctionTimeLeft.seconds}s kvar`
+              ? `${auctionTimeLeft.days}d ${auctionTimeLeft.hours}h ${auctionTimeLeft.minutes}m ${auctionTimeLeft.seconds}s `
               : "Auktionen Avslutad"}
           </Card.Text>
           <Card.Text>
             <strong>Utropspris:</strong> {auction.StartingPrice} kr
           </Card.Text>
           <ButtonGroup className="mt-1">
+            {/* Link to view more detail Auction */}
             <Link to={`/auctions/${auction.AuctionID}`}>
               <Button variant={btnVariant} disabled={!btnActive} size="sm">
                 {button}

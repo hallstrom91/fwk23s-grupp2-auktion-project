@@ -7,7 +7,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import ViewAuctionInfo from "../components/ViewAuctionInfo";
 import ViewAuctionBids from "../components/ViewAuctionBids";
 import PlaceBidBtn from "../components/PlaceBidBtn";
-
+import UpdateAuctionBtn from "../components/UpdateAuctionBtn";
 import DeleteAuctionBtn from "../components/DeleteAuctionBtn";
 // import functions from AuctionAPI
 import { useAuctionApi } from "../AuctionApi";
@@ -25,11 +25,10 @@ export default function ViewAuction() {
   const [leadingBid, setLeadingBid] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   // function to connect auction with bids and get highest bid.
   const fetchAuctionData = async () => {
-    // define timer for error messages
-    let timer;
     try {
       const auction = await fetchSingleAuction(id);
       const bids = await fetchAuctionBids(id);
@@ -46,10 +45,30 @@ export default function ViewAuction() {
       console.error("Failed to fetch auction and bids", error);
       setLoading(false);
       setError("Hämtning av auktionen misslyckades");
-      timer = setTimeout(() => {
+      setTimeout(() => {
         setError("");
-      }, 10000);
+      }, 3000);
     }
+  };
+
+  //onUpdate for UpdateAuctionBtn
+  const handleAuctionUpdate = () => {
+    //refresh page
+    fetchAuctionData()
+      .then(() => {
+        // display success msg
+        setSuccessMsg("Auktionen är uppdaterad.");
+        setTimeout(() => {
+          setSuccessMsg("");
+        }, 3000);
+      })
+      .catch((error) => {
+        console.error("Misslyckades med att uppdatera auktionen", error);
+        setError("Uppdatering av auktionen misslyckades.");
+        setTimeout(() => {
+          setError("");
+        }, 3000);
+      });
   };
 
   // mount at render
@@ -57,6 +76,7 @@ export default function ViewAuction() {
     fetchAuctionData(id);
   }, [id]);
 
+  // go to homepage after delete
   const handleDelete = () => {
     navigate("/");
   };
@@ -76,9 +96,14 @@ export default function ViewAuction() {
     <>
       <Container className="p-4">
         <Row>
-          {/* error message if api call dont work , app can crash also*/}
+          {/* error message if api call dont work , app can crash also */}
           <span>
             {error && <p className="text-center text-danger">{error}</p>}
+          </span>
+          <span>
+            {successMsg && (
+              <p className="text-center text-success">{successMsg}</p>
+            )}
           </span>
           {auction && (
             <Col>
@@ -100,8 +125,8 @@ export default function ViewAuction() {
           </Col>
         </Row>
         <Row>
-          {/* display animated loading at slow render */}
           <Col xs={8}>
+            {/* display animated loading at slow render */}
             {loading ? (
               <LoadingSpinner />
             ) : (
@@ -115,6 +140,10 @@ export default function ViewAuction() {
                       auction={auction}
                       onDelete={handleDelete}
                       leadingBids={leadingBid}
+                    />
+                    <UpdateAuctionBtn
+                      auction={auction}
+                      onUpdate={handleAuctionUpdate}
                     />
                   </div>
                 )}
@@ -131,7 +160,7 @@ export default function ViewAuction() {
                 )}
           </Col>
         </Row>
-        {!auction && loading && <LoadingSpinner />}
+        {/* {!auction && loading /* && <LoadingSpinner /> */}
         {!auction && !loading && (
           /* if no auctions can be found, show message */
           <p className="text-center">Auktionen kan inte hittas...</p>

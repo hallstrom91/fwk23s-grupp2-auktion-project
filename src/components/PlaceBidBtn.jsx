@@ -44,6 +44,7 @@ export default function PlaceBidBtn({ auction, leadingBids }) {
       Amount: bidAmount,
       Bidder: bidder,
     };
+
     // prevent bid if smaller than leading bid
     if (parseFloat(bidAmount) <= parseFloat(leadingBids?.Amount)) {
       setLowBidMsg("Budet är för lågt, försök igen.");
@@ -55,14 +56,28 @@ export default function PlaceBidBtn({ auction, leadingBids }) {
       // cancel function if bid is to low.
       return;
     }
-    createBid(userBid);
+
+    // if all is correct, place bid.
+    createBid(userBid)
+      .then(() => {
+        setBidAmount("");
+        setBidder("");
+        setDisplayModal(false);
+        // to refresh page after successful bid
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      })
+      .catch((error) => {
+        console.error("Ett fel inträffade, bud ej placerat.");
+      });
+  };
+
+  // clear input-fields at close
+  const clearFields = () => {
     setBidAmount("");
     setBidder("");
     setDisplayModal(false);
-    // to refresh page after successful bid
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
   };
 
   return (
@@ -79,13 +94,12 @@ export default function PlaceBidBtn({ auction, leadingBids }) {
       {/* Modal popup layout */}
       <Modal show={displayModal} onHide={() => setDisplayModal(false)}>
         <Modal.Header closeButton>
-          {leadingBids && (
-            <Modal.Title>Lägg Bud på {auction.Title}</Modal.Title>
-          )}
+          <Modal.Title className="text-black">
+            Lägg Bud på {auction.Title}
+          </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          <small className="">Ledande Bud: {leadingBids?.Amount} kr</small>
           {lowBidMsg && (
             <Alert variant="danger" className="mb-2">
               {lowBidMsg}
@@ -110,11 +124,8 @@ export default function PlaceBidBtn({ auction, leadingBids }) {
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={() => setDisplayModal(false)}
-          >
+          {leadingBids && <small>Ledande Bud: {leadingBids?.Amount} kr</small>}
+          <Button variant="danger" size="sm" onClick={clearFields}>
             Avbryt
           </Button>
           <Button variant="success" size="sm" onClick={handleBid}>

@@ -18,8 +18,9 @@ This project is an Auction Page built with Vite and React. It utilizes an API to
 
 - Displays detailed information about a single auction, including description, seller, etc.
 - Allows users to place bids
-- Allows users to delete auctions if no bids are present
-- If auction is closed, removes all bids except the highest/winning bid, - and hides buttons for placing bids/deleting auction
+- Allows users to delete auctions (if no bids are present)
+- Allows user to change auction information (if active)
+- If auction is closed, removes all bids except the highest/winning bid, - and hides buttons for placing bids/deleting auction/changing auction
 
 ### Create.jsx
 
@@ -41,6 +42,7 @@ This project is an Auction Page built with Vite and React. It utilizes an API to
 - LoadingSpinner.jsx
 - Navigation.jsx
 - PlaceBidBtn.jsx
+- UpdateAuctionBtn.jsx
 - SearchAuctions.jsx
 - ViewAuctionBids.jsx
 - ViewAuctionInfo.jsx

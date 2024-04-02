@@ -18,8 +18,6 @@ export default function Auctions() {
 
   // collect all auctions at mount
   useEffect(() => {
-    // define variable for error msg
-    let timer;
     fetchAuctions()
       .then((data) => {
         //update state
@@ -30,9 +28,9 @@ export default function Auctions() {
         console.error("Failed to fetch all auctions", error);
         setLoading(false);
         setError("Hämtning av auktioner misslyckades.");
-        timer = setTimeout(() => {
+        setTimeout(() => {
           setError("");
-        }, 10000);
+        }, 3000);
       });
   }, []);
 
@@ -106,10 +104,3 @@ export default function Auctions() {
     </>
   );
 }
-
-/*  const handleSearch = (searchQuery) => {
-  const filterSearch = auctions.filter((auction) =>
-    auction.Title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  setFilterAuctions(filterActiveOrClosed(filterSearch, closedAuctions));
-}; */
