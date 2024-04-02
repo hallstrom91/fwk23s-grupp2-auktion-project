@@ -69,7 +69,6 @@ export default function Home() {
             </Accordion>
           </Col>
           <h4 className="mt-5">Några av våra auktioner</h4>
-          {/* visa senaste tio auktionerna */}
           <Row className="g-4">
             {loading ? (
               <LoadingSpinner />
