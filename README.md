@@ -2,13 +2,48 @@
 
 This project is an Auction Page built with Vite and React. It utilizes an API to fetch data and perform CRUD operations on auction items.
 
-## Overview
+## Project Overview
 
-The Auction Page allows users to perform the following actions:
+### Home.jsx
 
-- Add new auction items.
-- Bid on ongoing auctions.
-- Remove auctions with no bids associated with them.
+- Welcome Page
+
+### Auctions.jsx
+
+- Displays active/closed auctions separately
+- Search functionality to display all auctions
+- Navigate to individual auctions
+
+### ViewAuction.jsx
+
+- Displays detailed information about a single auction, including description, seller, etc.
+- Allows users to place bids
+- Allows users to delete auctions if no bids are present
+- If auction is closed, removes all bids except the highest/winning bid, - and hides buttons for placing bids/deleting auction
+
+### Create.jsx
+
+- Page for creating a new auction
+- Start date defaults to current time
+- End date defaults to maximum of 13 days from current date
+
+### AuctionApi.jsx
+
+- Contains all API calls, can be imported as functions where needed
+- Includes function to calculate auction time
+
+### Components
+
+- AddAuction.jsx
+- AuctionContainer.jsx
+- DeleteAuctionBtn.jsx
+- Footer.jsx
+- LoadingSpinner.jsx
+- Navigation.jsx
+- PlaceBidBtn.jsx
+- SearchAuctions.jsx
+- ViewAuctionBids.jsx
+- ViewAuctionInfo.jsx
 
 ## Project Structure
 

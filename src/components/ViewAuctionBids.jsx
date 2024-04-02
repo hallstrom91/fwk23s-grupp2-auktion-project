@@ -6,7 +6,7 @@ export default function ViewAuctionBids({ auction, leadingBids }) {
     <>
       <Card bg="secondary">
         <Card.Header className="text-center text-black">
-          Tidigare Bud:
+          <strong>Tidigare Bud:</strong>
         </Card.Header>
         {/* show leading bid on top, if any bids */}
         {leadingBids && (

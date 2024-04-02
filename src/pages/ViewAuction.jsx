@@ -110,10 +110,11 @@ export default function ViewAuction() {
                 {/* block placebidbtn & deleteauctionbtn when auction is closed */}
                 {auction && auctionTimeLeft.days >= 0 && (
                   <div className="d-flex justify-content-between align-items-center pt-3">
-                    <PlaceBidBtn auction={auction} />
+                    <PlaceBidBtn auction={auction} leadingBids={leadingBid} />
                     <DeleteAuctionBtn
                       auction={auction}
                       onDelete={handleDelete}
+                      leadingBids={leadingBid}
                     />
                   </div>
                 )}

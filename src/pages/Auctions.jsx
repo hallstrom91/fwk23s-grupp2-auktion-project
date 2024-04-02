@@ -3,6 +3,7 @@ import { Container, Col, Row, Form, Button } from "react-bootstrap";
 // components
 import AuctionContainer from "../components/AuctionContainer";
 import LoadingSpinner from "../components/LoadingSpinner";
+import SearchAuctions from "../components/SearchAuctions";
 // import functions from AuctionAPI
 import { useAuctionApi } from "../AuctionApi";
 
@@ -70,6 +71,13 @@ export default function Auctions() {
           </Col>
         </Row>
         <Row className="mb-4">
+          <Col className="d-flex justify-content-start">
+            {/* <SearchAuctions onSearch={handleSearch} /> */}
+            <SearchAuctions
+              auctions={auctions}
+              setFilterAuctions={setFilterAuctions}
+            />
+          </Col>
           <Col className="d-flex justify-content-end">
             <Button variant="outline-primary" onClick={toggleActiveorClosed}>
               {closedAuctions ? "Aktiva Auktioner" : "Avslutade Auktioner"}
@@ -80,7 +88,7 @@ export default function Auctions() {
           {loading ? (
             <LoadingSpinner />
           ) : (
-            filterAuctions.map((auction, idx) => (
+            filterAuctions.map((auction) => (
               <Col md={4} key={auction.AuctionID}>
                 <AuctionContainer
                   auction={auction}
@@ -98,3 +106,10 @@ export default function Auctions() {
     </>
   );
 }
+
+/*  const handleSearch = (searchQuery) => {
+  const filterSearch = auctions.filter((auction) =>
+    auction.Title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  setFilterAuctions(filterActiveOrClosed(filterSearch, closedAuctions));
+}; */
