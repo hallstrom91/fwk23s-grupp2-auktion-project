@@ -19,7 +19,7 @@ export default function DeleteAuctionBtn({ auction, onDelete }) {
 
   return (
     <>
-      {/*  Button to display in auction item to delete item from API */}
+      {/*  Button to display in ViewAuction.jsx to remove active auction with no bids*/}
       <Button
         size="sm"
         variant="outline-danger"

@@ -3,43 +3,50 @@ import React, { createContext, useContext, useState } from "react";
 const AuctionContext = createContext();
 
 export const AuctionProvider = ({ children }) => {
-  const [auctions, setAuctions] = useState([]);
-  const [bids, setBids] = useState([]);
-  const [auctionBids, setAuctionBids] = useState({});
-
   /*
 =========================================
 GET Data from API DB
 =========================================
 */
-
+  // GET all auctions to display in Auctions.jsx
   const fetchAuctions = async () => {
     try {
       const response = await fetch(
-        "https://auctioneer.azurewebsites.net/auction/z2a"
+        "https://auctioneer.azurewebsites.net/auction/z2a/"
       );
-      const data = await response.json();
-      for (const auction of data) {
-        const bids = await fetchAuctionBids(auction.AuctionID);
-        auction.bids = bids;
-      }
-      setAuctions(data);
+      const auctions = await response.json();
+      return auctions;
     } catch (error) {
-      console.error("Failed to fetch auctions", error);
+      console.error("Failed to fetch all auctions.", error);
+      throw error;
+    }
+  };
+  // GET single auction to display in ViewAuction.jsx
+  const fetchSingleAuction = async (AuctionID) => {
+    try {
+      const response = await fetch(
+        `https://auctioneer.azurewebsites.net/auction/z2a/${AuctionID}`
+      );
+      const auction = await response.json();
+      return auction;
+    } catch (error) {
+      console.error(`Failed to fetch auction with ID #${AuctionID}`, error);
+      throw error;
     }
   };
 
-  // collect all bids connected to a specific auction-item
-  const fetchAuctionBids = async (auctionID) => {
+  // collect all bids connected to a specific auction in ViewAuction.jsx
+  const fetchAuctionBids = async (AuctionID) => {
     try {
       const response = await fetch(
-        `https://auctioneer.azurewebsites.net/bid/z2a/${auctionID}`
+        `https://auctioneer.azurewebsites.net/bid/z2a/${AuctionID}`
       );
-      const data = await response.json();
-      return data;
+      const bids = await response.json();
+      return bids;
     } catch (error) {
-      console.error("Failed to fetch bids.");
-      return [];
+      console.error("Failed to fetch bids.", error);
+
+      throw error;
     }
   };
 
@@ -68,19 +75,20 @@ POST Data to API DB
         }
       );
       if (response.ok) {
-        //call fetchAuctions to update and include new object in render
-        fetchAuctions();
+        console.log("Auktionen är nu skapad.");
       }
     } catch (error) {
-      console.error("Failed to create auction", error);
+      console.error("failed to created new auction", error);
     }
   };
 
   // place a bid on auction with POST, collect userBid from frontend-form in component AuctionContainer.jsx
   const createBid = async (userBid) => {
+    console.log("userbid POST", userBid);
+    userBid.GroupCode = "z2a";
     try {
       const response = await fetch(
-        "https://auctioneer.azurewebsites.net/bid/z2a",
+        "https://auctioneer.azurewebsites.net/bid/z2a/",
         {
           method: "POST",
           headers: {
@@ -90,23 +98,23 @@ POST Data to API DB
         }
       );
       if (response.ok) {
-        fetchAuctionBids(userBid.AuctionID);
+        console.log("Bud har placerats.");
       }
     } catch (error) {
-      console.error("Failed to place a bid.");
+      console.error("Tyvärr så gick det inte att lägga ett bud just nu.");
     }
   };
 
   /*
 =========================================
-DELETE Data from API DB
+  DELETE Data from API DB
 =========================================
 */
 
-  const deleteAuction = async (auctionID) => {
+  const deleteAuction = async (AuctionID) => {
     try {
       const response = await fetch(
-        `https://auctioneer.azurewebsites.net/auction/z2a/${auctionID}`,
+        `https://auctioneer.azurewebsites.net/auction/z2a/${AuctionID}`,
         {
           method: "DELETE",
           headers: {
@@ -115,26 +123,57 @@ DELETE Data from API DB
         }
       );
       if (response.ok) {
-        console.log(`Auction with ID ${auctionID} has been deleted.`);
+        console.log(`Auktionen med ID #${AuctionID} har blivit borttagen.`);
       } else {
-        console.error(`Failed to delete Auction with ID ${auctionID}`);
+        console.error(
+          `Tyvärr gick det inte att ta bort Auktionen med ID #${AuctionID}`
+        );
       }
     } catch (error) {
       console.error("Error", error);
     }
   };
 
+  /*
+=========================================
+Time Calc & Converter
+=========================================
+*/
+
+  // function to calculate time left
+  const calculateTimeLeft = (EndDate) => {
+    const difference = +new Date(EndDate) - +new Date();
+    let timeLeft = {};
+
+    if (difference > 0) {
+      timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    }
+
+    return timeLeft;
+  };
+
+  // format start/end-date to display static
+  const formatStaticDate = (EndDate) => {
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    return new Date(EndDate).toLocaleDateString("sv-SE", options);
+  };
+
   return (
     <AuctionContext.Provider
       value={{
-        fetchAuctions,
-        fetchAuctionBids,
         createAuction,
+        fetchAuctions,
+        fetchSingleAuction,
+        fetchAuctionBids,
         deleteAuction,
         createBid,
-        auctionBids,
-        auctions,
-        bids,
+        calculateTimeLeft,
+        formatStaticDate,
       }}
     >
       {children}

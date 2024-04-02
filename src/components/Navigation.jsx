@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
-// bootstrap
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import NavbarCollapse from "react-bootstrap/NavbarCollapse";
+import {
+  Container,
+  Nav,
+  Navbar,
+  NavDropdown,
+  NavbarCollapse,
+} from "react-bootstrap";
 
 export default function Navigation() {
   const [open, setOpen] = useState(false);
@@ -53,18 +53,11 @@ export default function Navigation() {
                 Auktioner
               </Link>
               <Link
-                to="/"
+                to="/create"
                 className="p-2 text-decoration-none text-white"
                 onClick={handleClick}
               >
-                Länk
-              </Link>
-              <Link
-                to="/"
-                className="p-2 text-decoration-none text-white"
-                onClick={handleClick}
-              >
-                Länk
+                Skapa Annons
               </Link>
             </Nav>
           </Navbar.Collapse>
